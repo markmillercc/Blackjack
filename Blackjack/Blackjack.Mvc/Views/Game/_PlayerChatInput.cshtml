@@ -1,0 +1,20 @@
+﻿@model int
+@{   
+    var tablePosition = Model.ToString();
+}
+
+<div class="chat-message-input-container">
+    <textarea name="chat-message-input" id="chatMessageInput-@tablePosition" 
+              onkeypress="return trySubmitChatMessage(event, @tablePosition)" 
+              maxlength="50" 
+              class="chat-message-input">
+    </textarea>
+    <div class="message-input-max">50 chars max</div>
+    <div class="pull-right">
+        <input name="sendMessage" id="sendMessage-@tablePosition" type="button" class="send-chat-message pull-right btn btn-primary" value="send" />
+    </div>
+    <div class="pull-left saysomething">
+        say something
+    </div>
+</div>
+

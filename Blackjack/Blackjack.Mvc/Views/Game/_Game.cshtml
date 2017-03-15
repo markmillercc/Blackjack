@@ -1,0 +1,113 @@
+﻿@model Blackjack.Mvc.ViewModels.BlackjackGameViewModel
+
+
+<div class="clearfix"></div>
+
+<div class="game-container playingCards faceImages">
+
+    <div class="game">
+
+        <div class="game-header">
+
+            @if (string.IsNullOrEmpty(Model.CurrentPlayerName))
+            {
+                <a class="btn btn-sm btn-danger" href="~/lobby">&larr; Lobby</a>
+            }
+            else
+            {
+                var exitBtnDisabled = !Model.WagerInputIsVisible ? "disabled" : "";
+                var exitBtnTooltip = !Model.WagerInputIsVisible ? "Cannot exit with a live bet on table" : "Exit this game";
+
+                <h4 class="pull-left"><b>@Model.CurrentPlayerName</b> $@Model.CurrentPlayerBalance</h4>
+                <span title="@exitBtnTooltip">
+                    <input class="exit-game-btn btn btn-sm btn-danger @exitBtnDisabled"
+                           type="button"
+                           id="leavegame"
+                           value="Exit" />
+                </span>
+            }
+
+            <h4 class="pull-right">@Model.Title &nbsp;&nbsp;&spades;&nbsp;&nbsp; Blackjack $@Model.MinWager - $@Model.MaxWager</h4>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 pull-right">
+                @Html.Partial("_GameDealer", Model.Dealer)
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-6 game-control-buttons">
+
+
+                @{
+
+                    if (Model.WagerPeriodTimerIsVisible)
+                    {
+                        <div class="clearfix"></div>
+                        <input type="hidden" id="bettingOpenTimer" value="@Model.SecondsAwaitingWagers" />
+                        <p class="pull-right" style="font-size:12px;font-weight:bold">
+                            The next hand will start in
+                            <span id="bettingOpenTimerDisplay">@(Model.WagerPeriodInSeconds - Model.SecondsAwaitingWagers)</span>
+                            seconds
+                        </p>
+                    }
+
+                    var recentOutcome = Model.Players.FirstOrDefault(a => a.Id == Session.SessionID)?.RecentWagerOutcome;
+                    if (!string.IsNullOrEmpty(recentOutcome))
+                    {
+
+                        var smile = recentOutcome == "Win" ? "You win!" : recentOutcome == "Lose" ? "You lose :(" : "Draw";
+                        <h3>@smile</h3>
+                    }
+                    if (Model.HitButtonIsVisible || Model.StandButtonIsVisible || Model.DoubleDownButtonIsVisible)
+                    {
+                        <h3>It's your turn</h3>
+                    }
+
+                    if (Model.HitButtonIsVisible)
+                    {
+                        <input class="btn btn-primary" type="button" id="hit" value="Hit" />
+                    }
+
+                    if (Model.StandButtonIsVisible)
+                    {
+                        <input class="btn btn-primary" type="button" id="stand" value="Stand" />
+                    }
+
+                    if (Model.DoubleDownButtonIsVisible)
+                    {
+                        <input class="btn btn-primary" type="button" id="doubledown" value="Double Down" />
+                    }
+
+                    if (Model.WagerInputIsVisible)
+                    {
+                        <h3>Place your bet</h3>
+                        <b>$</b><input type="text" value="@(Session["WagerAmount"] ?? Model.MinWager)" class="betInput" id="betInput">
+                        <input class="btn btn-primary" type="button" id="bet" value="Bet" />
+                    }
+
+                }
+
+            </div>
+        </div>
+
+        <br />
+
+        @if (Model.EndOfRoundTimerIsVisible)
+        {
+            <input type="hidden" id="roundReviewTimer" value="1" />
+            <div class="progressBar" id="progressBar"></div>
+        }
+        else
+        {
+            <div class="progressBar" style="visibility:hidden"></div>
+        }
+        <br />
+
+        @Html.Partial("_GamePlayers", Model.Players)
+
+    </div>
+
+</div>
+
+

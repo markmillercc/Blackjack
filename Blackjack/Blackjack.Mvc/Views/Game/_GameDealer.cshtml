@@ -1,0 +1,79 @@
+﻿@model Blackjack.Mvc.ViewModels.BlackjackGameDealerViewModel
+
+
+<div class="col-md-4 tablespot">
+
+    <div class="tablespot-hand">
+        @{
+            if (!Model.Hand?.Cards?.Any() ?? false)
+            {
+                <div style="visibility:hidden">
+                    <div class="card back">
+                        <span class="rank">-</span>
+                        <span class="suit">-</span>
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                var cardNumber = 1;
+                foreach (var card in Model.Hand.Cards)
+                {
+                    var rotatedCardCssClass = cardNumber % 2 == 0 ? "rotate5degrees" : "";
+
+                    var cardCssClass = "card back";
+                    var rankContent = "-";
+                    var suitContent = "-";
+
+                    if (cardNumber > 1 || Model.CanShowHand)
+                    {
+                        cardCssClass = string.Format("card rank-{0} {1}", card.Rank.ToLower(), card.Suit);
+                        rankContent = card.Rank.ToUpper();
+                        suitContent = Html.Raw(HttpUtility.HtmlDecode(card.SuitCode)).ToHtmlString();
+                    }
+
+                    <div class="tablespot-hand-card-container @rotatedCardCssClass">
+                        <div class="@cardCssClass">
+                            <span class="rank">@rankContent</span>
+                            <span class="suit">@suitContent</span>
+                        </div>
+                    </div>
+
+                    cardNumber++;
+                }
+            }
+        }
+        <div class="clearfix"></div>
+    </div>
+
+
+    <div class="tablespot-wager">
+        <h4 class="pull-left">@(Model.CanShowHand ? Model.Hand?.Score ?? "" : "")</h4>
+        <h4 class="pull-right">&nbsp;</h4>
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="tablespot-player">
+        <h4 class="pull-left">@Model.Name</h4>
+        <h4 class="pull-right">&nbsp;</h4>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+<div class="col-md-8">
+    <em class="pull-right">~ @Model.PercentOfCardsRemainingInShoe% of shoe remaining</em>
+    <ul class="deck">
+        @{
+            var decksize = (Model.PercentOfCardsRemainingInShoe * 32) / 100;
+            for (int i = 0; i < decksize; i++)
+            {
+                <li>
+                    <div class="card back">*</div>
+                </li>
+            }
+        }
+    </ul>
+</div>
+
+

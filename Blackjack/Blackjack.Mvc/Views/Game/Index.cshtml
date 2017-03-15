@@ -1,0 +1,337 @@
+﻿@model Blackjack.Mvc.ViewModels.BlackjackGameViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Game | @Model.Title</title>
+
+    <link rel="stylesheet" type="text/css" href="~/Content/cards.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="~/Content/cards-ie9.css" media="screen" />
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <script>
+        function trySubmitChatMessage(e, position) {
+            if (e && e.keyCode == 13) {
+                var button = $("#sendMessage-" + position);
+                button.click();
+                return false;
+            }
+        }
+    </script>
+
+</head>
+<body>
+
+    <div class="container body-content">
+
+        <div id="game">
+            @Html.Partial("_Game", Model)
+        </div>
+
+        <div class="chat row">
+            @{
+                var currentPlayer = Model.Players.FirstOrDefault(a => a.Id == Session.SessionID);
+                for (int tablePosition = 6; tablePosition >= 1; tablePosition--)
+                {
+                    <div class="col-md-2 console-lines" id="console-lines-@tablePosition">
+                        <div class="console-lines-input" id="console-lines-@tablePosition-input">
+                            @if (currentPlayer?.Position == tablePosition)
+                            {
+                                @Html.Partial("_PlayerChatInput", tablePosition);
+                            }
+                            else
+                            {
+                                <div class="chat-typing" id="playerIsTyping-@tablePosition" style="display:none">
+                                    <img src="~/Content/speechbubble.png" />
+                                </div>
+                            }
+                        </div>
+
+                        <div class="console-lines-messages" id="console-lines-@tablePosition-messages"></div>
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+
+    <h4 style="display:none;" id="messageBox"></h4>
+
+    @Scripts.Render("~/bundles/jquery-angular-signalr/script")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/blackjack-app/script");
+
+    <script src="~/signalr/hubs"></script>
+
+    <script>
+
+        $(function () {
+
+            $.ajaxSetup({ cache: false });
+
+            if ($('#roundReviewTimer').length) {
+                $('#progressBar').animate({
+                    width: '100%'
+                }, 7000, 'swing', function () {
+                    postRequest("/Game/EndRound", { gameId: "@Model.Id" });
+                });
+            }
+
+            function displayWarning(message) {
+                $('#messageBox').text(message).fadeIn(300);
+                setTimeout(function () {
+                    $('#messageBox').fadeOut(300);
+                }, 3500);
+            }
+
+            function postRequest(actionPath, parameters) {
+                $.post(actionPath, parameters).done(function (message) {
+                    if (message != "Ok") {
+                        displayWarning(message);
+                    }
+                }).fail(function (e) {
+                    $('#messageBox').text("Error:" + e.statusText);
+                });
+            }
+
+            var playerActionTimer = setInterval(function () {
+                var count = parseInt($('#timerpsecs').val()) + 1;
+                if (count <= 0)
+                    return;
+
+                var countExpiration = @Model.TurnLengthInSeconds +1;
+                if (count > countExpiration) {
+                    postRequest("/Game/ForceStand", { gameId: "@Model.Id" });
+                    return;
+                }
+
+                var red, green, step = 17;
+                var percent = 100 - (count / countExpiration * 100);
+
+                if (percent > 50) {
+                    red = count * step;
+                    green = 255;
+                }
+                else {
+                    red = 255;
+                    green = (countExpiration - count) * step;
+                }
+
+                $('#timerp').css({
+                    'width': percent + '%',
+                    'visibility': 'visible',
+                    'background': 'rgb(' + red + ', ' + green + ', 0)'
+                });
+
+                $('#timerpsecs').val(count);
+
+            }, 1000);
+
+            var openForBettingTimer = setInterval(function () {
+                var count = parseInt($('#bettingOpenTimer').val()) + 1;
+                if (count <= 0)
+                    return;
+
+                var countExpiration = @Model.WagerPeriodInSeconds +1;
+                if (count > countExpiration) {
+                    postRequest("/Game/Deal", { gameId: "@Model.Id" });
+                    return;
+                }
+
+                $('#bettingOpenTimer').val(count);
+                $('#bettingOpenTimerDisplay').text(countExpiration - count);
+
+            }, 1000);
+
+            $(document).on("click", "#hit, #doubledown, #stand", function () {
+                postRequest("/Game/PlayerActionRequest", {
+                    gameId: "@Model.Id",
+                    request: this.id
+                });
+            });
+
+            $(document).on("click", "#leavegame", function () {
+                postRequest("/Game/RemoveGamePlayer", {
+                    gameId: "@Model.Id"
+                });
+
+                $(".console-lines-input").each(function () {
+                    $(this).empty();
+                });
+
+            });
+
+            $(document).on("click", "#bet", function () {
+                postRequest("/Game/PlayerBetRequest", {
+                    gameId: "@Model.Id",
+                    betAmount: $('#betInput').val()
+                });
+            });
+
+            $(document).on("click", "button[name='joingame']", function () {
+
+                var joinButton = $(this);
+                var seatnumber = this.id.substr(('joinseatnumber-').length);
+                var seatnameInput = $('#playername-' + seatnumber);
+
+                if (!seatnameInput.is(':visible')) {
+                    seatnameInput.slideDown(90);
+                    joinButton.text("Sit").hide();
+                    setTimeout(function () {
+                        seatnameInput.slideUp(90);
+                        joinButton.text("Join").show();
+                        $("input[name='playername']").each(function () {
+                            $(this).val("");
+                        });
+                    }, 10000);
+                    return;
+                }
+
+                $.get("/Game/PlayerJoinRequest", {
+                    gameId: "@Model.Id",
+                    playerName: seatnameInput.val(),
+                    _seatNo: seatnumber
+                }).done(function (result) {
+                    $("#console-lines-" + seatnumber + "-input").empty().append(result);
+                });
+
+                $("input[name='playername']").each(function () {
+                    $(this).val("");
+                });
+            });
+
+            $(document).on("keyup", "input[name='playername']", function () {
+                var seatnumber = this.id.substr(('playername-').length);
+                var seatSitBtn = $("#joinseatnumber-" + seatnumber + "[name='joingame']");
+                if ($(this).val() == "")
+                    seatSitBtn.slideUp(90, 'linear');
+                else
+                    seatSitBtn.slideDown(90, 'linear');
+            });
+
+            $.connection.blackjackGameRoomHub.client.refresh = function () {
+                var joinInProgress = false;
+                $("input[name='playername']").each(function () {
+                    if ($(this).val() != "") {
+                        joinInProgress = true;
+                        return;
+                    }
+                });
+
+                if (joinInProgress)
+                    return;
+
+                $.get("/Game/Refresh", { gameId: "@Model.Id" })
+                    .done(function (result) {
+                        $('#game').empty().append(result);
+                    }).done(function () {
+                        if (!$('#roundReviewTimer').length)
+                            return;
+
+                        $('#progressBar').animate({
+                            width: '100%'
+                        }, 7000, 'swing', function () {
+                            postRequest("/Game/EndRound", { gameId: "@Model.Id" });
+                        });
+                    });
+            };
+
+            $.connection.blackjackGameRoomHub.client.sendMessage =
+                function (senderName, message, seatnumber) {
+                    fallingMessage(senderName, message, seatnumber);
+                };
+
+            $.connection.blackjackGameRoomHub.client.showPlayerIsTyping =
+                function (seatnumber) {
+                    $('#playerIsTyping-' + seatnumber).show();
+                    setTimeout(function () { $('#playerIsTyping-' + seatnumber).hide(); }, 1000);
+                };
+
+            $.connection.hub.start().done(function () {
+                $.connection.blackjackGameRoomHub.server.subscribe("@Model.Id");
+
+                $(document).on("keyup", "input[name='playername']", function () {
+                    var seatnumber = this.id.substr(('playername-').length);
+                    var seatSitBtn = $("#joinseatnumber-" + seatnumber + "[name='joingame']");
+                    if ($(this).val() == "")
+                        seatSitBtn.slideUp(90, 'linear');
+                    else
+                        seatSitBtn.slideDown(90, 'linear');
+                });
+
+                $(document).on("click", "input[name='sendMessage']", function () {
+                    var seatnumber = this.id.substr(('sendMessage-').length);
+                    var message = $("#chatMessageInput-" + seatnumber).val();
+                    var name = $("#playerNameDisplay-" + seatnumber).text();
+                    $.connection
+                        .blackjackGameRoomHub
+                        .server
+                        .sendMessage("@Model.Id", name, message, seatnumber);
+
+                    $("#chatMessageInput-" + seatnumber).val('').focus();
+                });
+
+                $(document).on("keydown", "textarea[name='chat-message-input']", function (e) {
+                    if (e && e.keyCode != 13) {
+                        var seatnumber = this.id.substr(('chatMessageInput-').length);
+                        $.connection.blackjackGameRoomHub.server.showPlayerIsTyping("@Model.Id", seatnumber);
+                    }
+                });
+            });
+
+            var bottomHeight3 = 0;
+            function fallingMessage(name, message, seatnumber) {
+                var windowHeight = $(window).height();
+                var p = $('#console-lines-' + seatnumber).position();
+                var bottom = windowHeight - p.top;                
+
+                var $msg = $('<div class="message-bubble-container" style="position:fixed;bottom:' + bottom + 'px">' +
+                                '<div class="message-bubble-name">' + name + '</div>' +
+                                '<div class="message-bubble">' + message + '</div>' +
+                              '</div>');
+
+                $('#console-lines-' + seatnumber + '-messages').append($msg);
+
+                $msg.animate({
+                    bottom: '0px'
+                }, 4000, function () {
+                    setTimeout(function () { $msg.animate({ bottom: '-80px' }, 6000, function () { $msg.remove(); }); }, 1000)
+
+                });
+            }
+
+            $(document).on("focusout", '.chat-message-input-container', function () {
+                if ($(".chat-message-input-container .chat-message-input").val() == '') {
+                    $(this).animate({
+                        marginTop: -45
+                    }, 200);
+                }
+            });
+
+            $(document).on("mouseenter", '.chat-message-input-container', function () {
+                $(this).animate({
+                    marginTop: 0
+                }, 200);
+                $(".chat-message-input-container .chat-message-input").focus();
+            });
+
+            $(document).on("mouseleave", '.chat-message-input-container', function () {
+                var hasfocus = $(".chat-message-input-container .chat-message-input").is(":focus");
+                if (!hasfocus) {
+                    $(this).animate({
+                        marginTop: -45
+                    }, 1000);
+                }
+            });
+
+        });
+
+    </script>
+
+</body>
+
+</html>

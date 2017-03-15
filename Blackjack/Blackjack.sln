@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Domain", "..\..\Blackjack12.6.16\Blackjack\Blackjack.Domain\Blackjack.Domain.csproj", "{819346BB-F7D5-4DC7-8C44-90591A6F0EBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Mvc", "..\..\Blackjack12.6.16\Blackjack\Blackjack.Mvc\Blackjack.Mvc.csproj", "{1B220CEF-0825-40BA-AE2F-EAFA9BA2CAA1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{819346BB-F7D5-4DC7-8C44-90591A6F0EBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{819346BB-F7D5-4DC7-8C44-90591A6F0EBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{819346BB-F7D5-4DC7-8C44-90591A6F0EBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{819346BB-F7D5-4DC7-8C44-90591A6F0EBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B220CEF-0825-40BA-AE2F-EAFA9BA2CAA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B220CEF-0825-40BA-AE2F-EAFA9BA2CAA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B220CEF-0825-40BA-AE2F-EAFA9BA2CAA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B220CEF-0825-40BA-AE2F-EAFA9BA2CAA1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

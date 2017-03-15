@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Blackjack.Mvc.ViewModels.BlackjackGameAsListItemViewModel>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobby</title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+
+    <div class="container body-content">
+
+        <div class="lobby container">
+
+            <div class="col-md-6">
+                <ul class="game-list">
+                    @foreach (var game in Model)
+                    {
+                        <li>
+                            <a href="~/game/index/@game.GameId">
+                                @game.Title | @game.Description | @game.OpenSeats seats open
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h1 class="main-header">blackjack</h1>
+
+                <div class="new-game-form">
+                    @using (Html.BeginForm("createnewgame", "lobby", FormMethod.Post))
+                    {
+                        <p>Start a new game</p><br />
+
+                            <div class="form-group col-md-12">
+                                <input type="text" class="form-control" name="gameName" placeholder="Game name" />
+                            </div>
+                            <div class="form-group col-md-3">
+                                <input type="number" class="form-control" name="minBet" placeholder="Min bet" />
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <input type="number" class="form-control" name="maxBet" placeholder="Max bet" />
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="form-group col-md-6">
+                                <input type="submit" class="form-control btn btn-success" value="Create Game" />
+                            </div>
+                            <div class="clearfix"></div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

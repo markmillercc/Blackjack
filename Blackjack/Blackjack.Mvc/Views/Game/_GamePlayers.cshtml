@@ -1,0 +1,101 @@
+﻿@model List<Blackjack.Mvc.ViewModels.BlackjackGamePlayerViewModel>
+
+<div class="row player-row">
+
+    @{
+        var isGuest = !Model.Any(a => a.Id == Session.SessionID);
+
+        for (int tablePosition = 6; tablePosition >= 1; tablePosition--)
+        {
+            var player = Model.FirstOrDefault(a => a.Position == tablePosition);
+
+            var tablespotCssClass = "tablespot";
+            if (player?.HasAction ?? false)
+            {
+                tablespotCssClass += "-withAction";
+            }
+
+            <div class="col-md-2 @tablespotCssClass" style="">
+
+                @if ((player?.SecondsAwaitingAction ?? -1) >= 0)
+                {
+                    <input id="timerpsecs" type="hidden" value="@player.SecondsAwaitingAction" />
+                    <div class="actionProgressBarContainer">
+                        <div class="actionProgressBar" id="timerp" style="visibility:hidden"></div>
+                    </div>
+                }
+                else
+                {
+                    <div class="actionProgressBar" style="visibility:hidden"></div>
+                }
+
+                @if (!string.IsNullOrEmpty(player?.RecentWagerOutcome))
+                {
+                    <div class="tablespot-outcome tablespot-outcome-@player.RecentWagerOutcome.ToLower()">@player.RecentWagerOutcome</div>
+                }
+
+                <div class="tablespot-hand" style="text-align:center">
+                    @if (player?.Hand?.Cards?.Any() ?? false)
+                    {
+                        var cardNumber = 1;
+                        foreach (var card in player.Hand.Cards)
+                        {
+                            var rotatedCardCssClass = cardNumber % 2 == 0 ? "rotate5degrees" : "";
+                            var cardCssClass = string.Format("card rank-{0} {1}", card.Rank.ToLower(), card.Suit);
+                            var rankContent = card.Rank.ToUpper();
+                            var suitContent = Html.Raw(HttpUtility.HtmlDecode(card.SuitCode)).ToHtmlString();
+
+                            <div class="tablespot-hand-card-container @rotatedCardCssClass">
+                                <div class="@cardCssClass">
+                                    <span class="rank">@rankContent</span>
+                                    <span class="suit">@suitContent</span>
+                                </div>
+                            </div>
+
+                            cardNumber++;
+                        }
+                    }
+                    else
+                    {
+                        <div style="visibility:hidden">
+                            <div class="card back">
+                                <span class="rank">-</span>
+                                <span class="suit">-</span>
+                            </div>
+                        </div>
+                    }
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="tablespot-wager">
+                    <h4 class="pull-left">@(player?.Hand?.Score ?? "")</h4>
+                    <h4 class="pull-right">@(player?.Wager == null ? "" : "$" + player.Wager)</h4>
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="tablespot-player">
+                    <h4 style="font-size:11px" class="pull-right">@(player == null ? "" : "$" + player.Balance)</h4>
+                    <h4 id="playerNameDisplay-@tablePosition" class="pull-left">@(player?.Name ?? "")</h4>                    
+                    <div class="clearfix"></div>
+                </div>
+
+                @if (player == null && isGuest)
+                {
+                    <div style="text-align:center" class="">
+
+                        <input type="text" class="form-control"
+                               name="playername"
+                               id="playername-@tablePosition"
+                               placeholder="Enter your name" maxlength="15" style="margin-bottom:10px;display:none">
+
+                        <div style="margin-bottom:10px">
+                            <button class="btn btn-primary" type="button" name="joingame" id="joinseatnumber-@tablePosition">Join</button>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        }
+    }
+</div>
