@@ -58,10 +58,11 @@ namespace Blackjack.Mvc.Controllers
             return PartialView("_Game", new BlackjackGameViewModel(Game, Player?.Id));
         }
 
-        private ActionResult Deal()
+        public ActionResult Deal(string gameId)
         {
             try
             {
+                Game = BlackjackContext.GetGame(gameId);
                 Game.StartRound();
                 Save();
                 return Content("Ok");
@@ -70,12 +71,6 @@ namespace Blackjack.Mvc.Controllers
             {
                 return Content(exception.Message);
             }
-        }
-
-        public ActionResult Deal(string gameId)
-        {
-            Game = BlackjackContext.GetGame(gameId);
-            return Deal();
         }
 
         public ActionResult EndRound(string gameId)
