@@ -10,7 +10,7 @@ namespace Blackjack.Domain.Tests
         private int _numberOfPlayers = 7;
 
         [TestMethod]
-        public void blackjack_game_can_initialize_and_add_players()
+        public void blackjack_game_can_initialize()
         {
             var game = InitializeGameForTesting();
             Assert.AreEqual(game.Players.Count(a => !a.HasAction), _numberOfPlayers);
