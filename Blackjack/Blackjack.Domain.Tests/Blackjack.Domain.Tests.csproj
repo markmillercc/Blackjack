@@ -52,6 +52,8 @@
   <ItemGroup>
     <Compile Include="BlackjackGameTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestPlayerAccount.cs" />
+    <Compile Include="TestPlayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Blackjack.Domain\Blackjack.Domain.csproj">
