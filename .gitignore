@@ -283,4 +283,5 @@ __pycache__/
 
 # End of https://www.gitignore.io/api/visualstudio
 
+Web.Debug.config
 Web.Release.config
