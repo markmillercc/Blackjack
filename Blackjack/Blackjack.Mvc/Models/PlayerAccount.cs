@@ -2,12 +2,12 @@
 
 namespace Blackjack.Mvc.Models
 {
-    public class GamblerAccount : IGamblerAccount
+    public class PlayerAccount : IPlayerAccount
     {
         public string Id { get; private set; }
         public double Balance { get; private set; }
 
-        public GamblerAccount(string id, double startingBalance)
+        public PlayerAccount(string id, double startingBalance)
         {
             Id = id;
             Balance = startingBalance;

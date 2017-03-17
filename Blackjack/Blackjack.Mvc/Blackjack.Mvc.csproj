@@ -197,7 +197,7 @@
     <Compile Include="ViewModels\BlackjackGamePlayerViewModel.cs" />
     <Compile Include="ViewModels\BlackjackHandViewModel.cs" />
     <Compile Include="ViewModels\CardViewModel.cs" />
-    <Compile Include="Models\GamblerAccount.cs" />
+    <Compile Include="Models\PlayerAccount.cs" />
     <Compile Include="Models\MyBlackjackGame.cs" />
     <Compile Include="ViewModels\BlackjackGameViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

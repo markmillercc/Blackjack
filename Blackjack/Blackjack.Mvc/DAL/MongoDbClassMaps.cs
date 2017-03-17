@@ -6,7 +6,7 @@ namespace Blackjack.Mvc.DAL
 {
     public class MongoDbClassMaps
     {
-        public class AccountClassMap : BsonClassMap<GamblerAccount>
+        public class AccountClassMap : BsonClassMap<PlayerAccount>
         {
             public AccountClassMap()
             {

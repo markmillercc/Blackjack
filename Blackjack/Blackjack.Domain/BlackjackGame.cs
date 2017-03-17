@@ -57,7 +57,7 @@ namespace Blackjack.Domain
                 !_players.Any(a => a.Position == position);
         }
 
-        public void AddPlayer(IGamblerAccount account, string alias, int position)
+        public void AddPlayer(IPlayerAccount account, string alias, int position)
         {
             if (account == null)
                 throw new ArgumentNullException("account", "Account is null");
@@ -74,7 +74,7 @@ namespace Blackjack.Domain
             _players.Add(new BlackjackGamePlayer(account, this, alias, position));
         }
 
-        public void AddPlayer(IGamblerAccount account, string alias)
+        public void AddPlayer(IPlayerAccount account, string alias)
         {
             int position = 1;
             while (position <= MaxPlayers && !IsPositionOpen(position))

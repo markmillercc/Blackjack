@@ -2,7 +2,7 @@
 
 namespace Blackjack.Domain
 {
-    public interface IGamblerAccount
+    public interface IPlayerAccount
     {
         string Id { get; }
         double Balance { get; }

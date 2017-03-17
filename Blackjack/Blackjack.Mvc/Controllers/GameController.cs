@@ -154,7 +154,7 @@ namespace Blackjack.Mvc.Controllers
                 else
                     balance = (double)HttpContext.Session["Balance"];
 
-                var account = new GamblerAccount(
+                var account = new PlayerAccount(
                     id: HttpContext.Session.SessionID,
                     startingBalance: balance);
 

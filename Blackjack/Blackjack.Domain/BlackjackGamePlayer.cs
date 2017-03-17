@@ -10,7 +10,7 @@ namespace Blackjack.Domain
         private BlackjackGame _game;
 
         public int Position { get; private set; }
-        public IGamblerAccount Account { get; private set; }
+        public IPlayerAccount Account { get; private set; }
 
         public string Alias { get; private set; }
 
@@ -19,7 +19,7 @@ namespace Blackjack.Domain
         public double Wager { get { return _game.GetPlayerWager(this); } }
         public BlackjackHand Hand { get { return _game.GetPlayerHand(this); } }
 
-        public BlackjackGamePlayer(IGamblerAccount account, BlackjackGame game, string alias, int position)
+        public BlackjackGamePlayer(IPlayerAccount account, BlackjackGame game, string alias, int position)
         {
             if (account == null)
                 throw new ArgumentNullException("account", "Account is null");
