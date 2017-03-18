@@ -189,7 +189,7 @@ namespace Blackjack.Mvc.Controllers
             if (Game == null)
                 throw new InvalidOperationException("Cannot load game");
 
-            BlackjackContext.SaveGameRoom(Game);
+            BlackjackContext.SaveGame(Game);
 
             if (Player != null)
             {

@@ -26,7 +26,7 @@ namespace Blackjack.Mvc.Controllers
         public ActionResult Index()
         {
             var gamelist = BlackjackContext
-                .GetGameList()
+                .GetGames()
                 .Select(a => new BlackjackGameAsListItemViewModel(a))
                 .ToList();
             return View(gamelist);
@@ -43,7 +43,7 @@ namespace Blackjack.Mvc.Controllers
 
                 var game = new Models.LiveBlackjackGame(minBet, maxBet, 30, 10);
                 game.Title = name;
-                BlackjackContext.SaveGameRoom(game);                
+                BlackjackContext.SaveGame(game);                
                 return RedirectToAction("index", "game", new { id = game.Id });
             }
             catch
