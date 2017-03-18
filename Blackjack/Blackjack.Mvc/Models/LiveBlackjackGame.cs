@@ -37,34 +37,7 @@ namespace Blackjack.Mvc.Models
             _playerIdsFromMissedRounds = new List<string>();
             TurnLengthInSeconds = turnLengthInSeconds;
             BettingPeriodInSeconds = bettingPeriodInSeconds;
-        }
-
-        public void AddPlayerToMissedRoundList(BlackjackGamePlayer player)
-        {
-            if (Players.Contains(player))
-                _playerIdsFromMissedRounds.Add(player.Id);
-        }
-
-        public void RemovePlayerFromMissedRoundList(BlackjackGamePlayer player)
-        {
-            _playerIdsFromMissedRounds.RemoveAll(id => id == player.Id);
-        }
-
-        public void RemoveStagnantPlayers()
-        {
-            _playerIdsFromMissedRounds
-                .GroupBy(id => id)
-                .Select(a => new { playerId = a.Key, missedRounds = a.Count() })
-                .Where(a => a.missedRounds > 5)
-                .Select(a => a.playerId)
-                .ToList()
-                .ForEach(playerId =>
-                {
-                    var player = Players.FirstOrDefault(a => a.Id == playerId && !a.IsLive);
-                    RemovePlayer(player);
-                    RemovePlayerFromMissedRoundList(player);
-                });
-        }
+        }        
 
         public override void StartRound()
         {
@@ -76,24 +49,14 @@ namespace Blackjack.Mvc.Models
             foreach (var player in Players)
             {
                 if (player.IsLive)
-                    RemovePlayerFromMissedRoundList(player);
+                    _playerIdsFromMissedRounds.RemoveAll(id => id == player.Id);
                 else
-                    AddPlayerToMissedRoundList(player);
+                    _playerIdsFromMissedRounds.Add(player.Id);
             }
 
             RemoveStagnantPlayers();
-
-            if (Players.Any(a => a.HasAction))
-            {
-                AwaitingPlayerActionSince = DateTime.Now;
-            }
-            else
-            {
-                SettlePlayers();
-                AwaitingPlayerActionSince = null;
-            }
-
-            AwaitingNextRoundSince = null;
+            AwaitingPlayerActionSince = DateTime.Now;
+            AwaitingNextRoundSince = null;      
         }
 
         public override void EndRound()
@@ -106,24 +69,19 @@ namespace Blackjack.Mvc.Models
         public void ForceCurrentActionToStand()
         {
             var currentAction = Players.FirstOrDefault(a => a.HasAction);
-
             if (currentAction == null)
-            {
-                AwaitingPlayerActionSince = null;
-            }
-            else if (PlayerActionIsExpired)
-            {
-                currentAction.Stand();
+                return;
 
-                if (Players.Any(a => a.HasAction))
-                {
-                    AwaitingPlayerActionSince = DateTime.UtcNow;
-                }
-                else
-                {
-                    SettlePlayers();
-                    AwaitingPlayerActionSince = null;
-                }
+            currentAction.Stand();
+
+            if (Players.Any(a => a.HasAction))
+            {
+                AwaitingPlayerActionSince = DateTime.UtcNow;
+            }
+            else
+            {
+                SettlePlayers();
+                AwaitingPlayerActionSince = null;
             }
         }
 
@@ -171,6 +129,22 @@ namespace Blackjack.Mvc.Models
             {
                 AwaitingPlayerActionSince = DateTime.UtcNow;
             }
+        }
+
+        private void RemoveStagnantPlayers()
+        {
+            _playerIdsFromMissedRounds
+                .GroupBy(id => id)
+                .Select(a => new { playerId = a.Key, missedRounds = a.Count() })
+                .Where(a => a.missedRounds > 5)
+                .Select(a => a.playerId)
+                .ToList()
+                .ForEach(playerId =>
+                {
+                    var player = Players.FirstOrDefault(a => a.Id == playerId && !a.IsLive);
+                    RemovePlayer(player);
+                    _playerIdsFromMissedRounds.RemoveAll(id => id == player.Id);
+                });
         }
 
         private void SettlePlayers()
