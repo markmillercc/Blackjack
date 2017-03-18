@@ -1,4 +1,4 @@
-# blackjack
+# Blackjack
 
 ### Blackjack.Domain
 Core gaming logic and behavior.
