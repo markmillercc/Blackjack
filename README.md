@@ -1,6 +1,6 @@
 # blackjack
 
-**Blackjack.Domain**
+**Blackjack.Domain** 
 Core gaming logic and behavior.
 
 **Blackjack.Mvc**
