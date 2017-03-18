@@ -186,7 +186,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\LobbyController.cs" />
-    <Compile Include="DAL\BlackjackContext.cs" />
+    <Compile Include="DAL\LiveBlackjackContext.cs" />
     <Compile Include="DAL\MongoDbClassMaps.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

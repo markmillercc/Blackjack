@@ -14,13 +14,13 @@ namespace Blackjack.Mvc.Controllers
     {
         private LiveBlackjackGame Game;
 
-        private BlackjackContext _blackjackContext;
-        private BlackjackContext BlackjackContext
+        private LiveBlackjackContext _blackjackContext;
+        private LiveBlackjackContext BlackjackContext
         {
             get
             {
                 if (_blackjackContext == null)
-                    _blackjackContext = new BlackjackContext();
+                    _blackjackContext = new LiveBlackjackContext();
 
                 return _blackjackContext;
             }

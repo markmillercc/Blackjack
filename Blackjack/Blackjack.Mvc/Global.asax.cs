@@ -18,7 +18,7 @@ namespace Blackjack.Mvc
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            BlackjackContext.RegisterMongoDbClassMaps();
+            LiveBlackjackContext.RegisterMongoDbClassMaps();
         }
     }
 }

@@ -9,11 +9,11 @@ using System.Reflection;
 
 namespace Blackjack.Mvc.DAL
 {
-    public class BlackjackContext : IDisposable
+    public class LiveBlackjackContext : IDisposable
     {
         public readonly IMongoCollection<LiveBlackjackGame> BlackjackGames;
 
-        public BlackjackContext()
+        public LiveBlackjackContext()
         {
             var client = new MongoClient();
 
@@ -22,9 +22,9 @@ namespace Blackjack.Mvc.DAL
                 .GetCollection<LiveBlackjackGame>("blackjack-games");
         }
 
-        public static BlackjackContext Create()
+        public static LiveBlackjackContext Create()
         {
-            return new BlackjackContext();
+            return new LiveBlackjackContext();
         }
 
         public LiveBlackjackGame GetGame(string id) 
