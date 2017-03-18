@@ -105,7 +105,7 @@ namespace Blackjack.Mvc.DAL
             }
         }
 
-        public class MyBlackjackGameClassMap : BsonClassMap<MyBlackjackGame>
+        public class MyBlackjackGameClassMap : BsonClassMap<LiveBlackjackGame>
         {
             public MyBlackjackGameClassMap()
             {

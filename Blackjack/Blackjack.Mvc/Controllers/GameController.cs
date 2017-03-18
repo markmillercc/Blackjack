@@ -12,7 +12,7 @@ namespace Blackjack.Mvc.Controllers
 {
     public class GameController : Controller
     {
-        private MyBlackjackGame Game;
+        private LiveBlackjackGame Game;
 
         private BlackjackContext _blackjackContext;
         private BlackjackContext BlackjackContext

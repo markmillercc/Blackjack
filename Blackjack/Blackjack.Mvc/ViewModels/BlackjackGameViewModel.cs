@@ -34,7 +34,7 @@ namespace Blackjack.Mvc.ViewModels
         public BlackjackGameDealerViewModel Dealer { get; private set; }
         public IEnumerable<BlackjackGamePlayerViewModel> Players { get; private set; }        
 
-        public BlackjackGameViewModel(MyBlackjackGame game, string currentPlayerId)
+        public BlackjackGameViewModel(LiveBlackjackGame game, string currentPlayerId)
         {
             if (game == null)
                 throw new ArgumentNullException("game");
@@ -64,7 +64,7 @@ namespace Blackjack.Mvc.ViewModels
             }            
         }
 
-        private IEnumerable<BlackjackGamePlayerViewModel> GetPlayers(Models.MyBlackjackGame game, int secondsAwaitingPlayerAction)
+        private IEnumerable<BlackjackGamePlayerViewModel> GetPlayers(Models.LiveBlackjackGame game, int secondsAwaitingPlayerAction)
         {
             var players = new List<BlackjackGamePlayerViewModel>();
             foreach (var player in game.Players)

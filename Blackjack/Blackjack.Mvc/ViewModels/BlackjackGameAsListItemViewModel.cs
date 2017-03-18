@@ -10,7 +10,7 @@ namespace Blackjack.Mvc.ViewModels
         public string OpenSeats { get; private set; }
         public string Description { get; private set; }
 
-        public BlackjackGameAsListItemViewModel(MyBlackjackGame game)
+        public BlackjackGameAsListItemViewModel(LiveBlackjackGame game)
         {
             GameId = game.Id;
             Title = game.Title;

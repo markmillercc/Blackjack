@@ -11,7 +11,7 @@ namespace Blackjack.Mvc.DAL
 {
     public class BlackjackContext : IDisposable
     {
-        public readonly IMongoCollection<MyBlackjackGame> BlackjackGames;
+        public readonly IMongoCollection<LiveBlackjackGame> BlackjackGames;
 
         public BlackjackContext()
         {
@@ -19,7 +19,7 @@ namespace Blackjack.Mvc.DAL
 
             BlackjackGames = client
                 .GetDatabase("blackjack-mvc")
-                .GetCollection<MyBlackjackGame>("blackjack-games");
+                .GetCollection<LiveBlackjackGame>("blackjack-games");
         }
 
         public static BlackjackContext Create()
@@ -27,7 +27,7 @@ namespace Blackjack.Mvc.DAL
             return new BlackjackContext();
         }
 
-        public MyBlackjackGame GetGame(string id) 
+        public LiveBlackjackGame GetGame(string id) 
         {
             var game = BlackjackGames.Find(a => a.Id == id).FirstOrDefault();
 
@@ -37,12 +37,12 @@ namespace Blackjack.Mvc.DAL
             return game;
         }
 
-        public IEnumerable<MyBlackjackGame> GetGameList()
+        public IEnumerable<LiveBlackjackGame> GetGameList()
         {
             return BlackjackGames.Find(a => true).ToList();
         }
 
-        public void SaveGameRoom(MyBlackjackGame game) 
+        public void SaveGameRoom(LiveBlackjackGame game) 
         {
             if (game == null)
                 throw new ArgumentNullException("gameRoom");

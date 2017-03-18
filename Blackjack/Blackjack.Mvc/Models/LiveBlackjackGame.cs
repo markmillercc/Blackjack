@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Blackjack.Mvc.Models
 {
-    public class MyBlackjackGame : BlackjackGame
+    public class LiveBlackjackGame : BlackjackGame
     {
         public string Id { get; private set; }
 
@@ -30,7 +30,7 @@ namespace Blackjack.Mvc.Models
             }
         }
 
-        public MyBlackjackGame(double minWager, double maxWager, int turnLengthInSeconds, int bettingPeriodInSeconds) 
+        public LiveBlackjackGame(double minWager, double maxWager, int turnLengthInSeconds, int bettingPeriodInSeconds) 
             : base(minWager, maxWager)
         {
             Id = Guid.NewGuid().ToString().Replace("-", "");

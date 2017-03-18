@@ -41,7 +41,7 @@ namespace Blackjack.Mvc.Controllers
                 var minBet = int.Parse(collection["minBet"]);
                 var maxBet = int.Parse(collection["maxBet"]);
 
-                var game = new Models.MyBlackjackGame(minBet, maxBet, 30, 10);
+                var game = new Models.LiveBlackjackGame(minBet, maxBet, 30, 10);
                 game.Title = name;
                 BlackjackContext.SaveGameRoom(game);                
                 return RedirectToAction("index", "game", new { id = game.Id });
